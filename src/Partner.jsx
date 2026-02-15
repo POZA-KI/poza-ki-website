@@ -500,7 +500,7 @@ export default function PozaKIPartner() {
         </div>
         <div style={{ display: "flex", gap: 32 }}>
           <a href="/" style={{ fontFamily: MF, fontSize: 11, letterSpacing: 2, color: C.dim, textDecoration: "none", textTransform: "uppercase" }}>← Hauptseite</a>
-          {["Impressum", "Datenschutz"].map(l => <a key={l} href="#" style={{ fontFamily: MF, fontSize: 11, letterSpacing: 2, color: C.dim, textDecoration: "none", textTransform: "uppercase" }}>{l}</a>)}
+          {[{l:"Impressum",p:"/impressum"},{l:"Datenschutz",p:"/datenschutz"},{l:"AGB",p:"/agb"}].map(i => <a key={i.l} href={i.p} style={{ fontFamily: MF, fontSize: 11, letterSpacing: 2, color: C.dim, textDecoration: "none", textTransform: "uppercase" }}>{i.l}</a>)}
         </div>
         <p style={{ fontFamily: MF, fontSize: 11, color: C.dim, letterSpacing: 2 }}>© 2026 POZA-KI</p>
       </footer>

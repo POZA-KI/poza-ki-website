@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 
-const PHONE = "+43 XXX XXXXXXX";
 const DF = "'Playfair Display', Georgia, serif";
 const BF = "'Syne', sans-serif";
 const MF = "'Space Grotesk', monospace";
@@ -109,7 +108,6 @@ export default function PozaKI() {
   const [progress, setProgress] = useState(0);
   const [mousePos, setMousePos] = useState({ x: 0.5, y: 0.5 });
   const [activeInd, setActiveInd] = useState(0);
-  const [callActive, setCallActive] = useState(false);
   const [openFaq, setOpenFaq] = useState(-1);
 
   useEffect(() => {
@@ -272,7 +270,7 @@ export default function PozaKI() {
 
         <Reveal delay={0.6}>
           <div style={{ display: "flex", gap: 20, marginTop: 56, flexWrap: "wrap", justifyContent: "center" }}>
-            <a href="https://cal.eu/poza-ki/30min" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "18px 40px", borderRadius: 60, textDecoration: "none", fontFamily: BF, fontSize: 15, fontWeight: 700, letterSpacing: 1, backgroundColor: C.gold, color: "#050507", boxShadow: `0 4px 30px ${C.goldG}` }}>Demo anhören →</a>
+            <a href="https://cal.eu/poza-ki/30min" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "18px 40px", borderRadius: 60, textDecoration: "none", fontFamily: BF, fontSize: 15, fontWeight: 700, letterSpacing: 1, backgroundColor: C.gold, color: "#050507", boxShadow: `0 4px 30px ${C.goldG}` }}>Gespräch buchen →</a>
             <a href="#vorteile" style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "18px 40px", borderRadius: 60, textDecoration: "none", fontFamily: BF, fontSize: 15, letterSpacing: 1, backgroundColor: "transparent", color: C.light, border: `1px solid ${C.line2}` }}>Mehr erfahren</a>
           </div>
         </Reveal>
@@ -387,7 +385,7 @@ export default function PozaKI() {
         </Reveal>
       </section>
 
-      {/* DEMO */}
+      {/* DEMO — ElevenLabs Widget */}
       <section id="demo" style={{ padding: `120px ${pad}`, background: `linear-gradient(180deg, transparent, ${C.goldF}, transparent)` }}>
         <div style={{ maxWidth: 700, margin: "0 auto", textAlign: "center" }}>
           <Reveal>
@@ -398,23 +396,21 @@ export default function PozaKI() {
             </div>
           </Reveal>
           <Reveal delay={0.1}>
-            <h2 style={{ fontFamily: DF, fontSize: "clamp(36px,5vw,64px)", fontWeight: 900, letterSpacing: -2, marginBottom: 20 }}>Hör selbst.</h2>
+            <h2 style={{ fontFamily: DF, fontSize: "clamp(36px,5vw,64px)", fontWeight: 900, letterSpacing: -2, marginBottom: 20 }}>Überzeugen Sie sich selbst.</h2>
           </Reveal>
           <Reveal delay={0.2}>
-            <p style={{ fontFamily: AF, fontStyle: "italic", fontSize: 20, color: C.mid, lineHeight: 1.6, marginBottom: 48 }}>Kein Video. Kein Pitch-Deck. Ruf einfach an und sprich mit unserer KI.</p>
+            <p style={{ fontFamily: AF, fontStyle: "italic", fontSize: 20, color: C.mid, lineHeight: 1.6, marginBottom: 48 }}>So könnte sich Ihr neuer KI-Assistent anhören. Sprechen Sie jetzt mit Lisa — direkt hier im Browser.</p>
           </Reveal>
           <Reveal delay={0.3}>
-            <div onClick={() => setCallActive(!callActive)} style={{ backgroundColor: C.dark, border: `2px solid ${callActive ? C.gold : C.line2}`, borderRadius: 32, padding: "40px 48px", cursor: "pointer", transition: "all 0.5s", boxShadow: callActive ? `0 0 60px ${C.goldG}` : "none", position: "relative", overflow: "hidden" }}>
-              {callActive && <div style={{ position: "absolute", top: "50%", left: "50%", width: 300, height: 300, borderRadius: "50%", border: `1px solid rgba(200,164,78,0.12)`, animation: "poza_pulse 2s ease-out infinite" }} />}
-              <Waveform active={callActive} />
-              <div style={{ marginTop: 24, display: "flex", alignItems: "center", justifyContent: "center", gap: 20 }}>
-                <div style={{ width: 64, height: 64, borderRadius: "50%", background: callActive ? "#e84393" : `linear-gradient(135deg, ${C.gold}, ${C.goldB})`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 28, transition: "all 0.5s", transform: callActive ? "rotate(135deg)" : "rotate(0)" }}>📞</div>
-                <div style={{ textAlign: "left" }}>
-                  <p style={{ fontFamily: MF, fontSize: 11, letterSpacing: 3, color: C.dim, textTransform: "uppercase" }}>{callActive ? "Anruf beenden" : "Jetzt anrufen"}</p>
-                  <p style={{ fontFamily: DF, fontSize: 28, fontWeight: 700, color: C.gold }}>{PHONE}</p>
-                </div>
-              </div>
+            <div style={{ backgroundColor: C.dark, border: `2px solid ${C.line2}`, borderRadius: 32, padding: "48px 32px", position: "relative", overflow: "hidden" }}>
+              <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${C.gold}, transparent)` }} />
+              <Waveform active={false} />
+              <p style={{ fontFamily: BF, fontSize: 16, color: C.mid, marginTop: 24, marginBottom: 8 }}>Klicken Sie auf den Button unten rechts</p>
+              <p style={{ fontFamily: MF, fontSize: 12, color: C.dim, letterSpacing: 2 }}>und sprechen Sie mit unserer KI-Assistentin Lisa</p>
             </div>
+          </Reveal>
+          <Reveal delay={0.4}>
+            <p style={{ fontFamily: MF, fontSize: 11, letterSpacing: 3, color: C.dim, marginTop: 24, textTransform: "uppercase" }}>✦ Mikrofon-Zugriff erforderlich ✦</p>
           </Reveal>
         </div>
       </section>
@@ -556,7 +552,7 @@ export default function PozaKI() {
         <Reveal delay={0.3}>
           <div style={{ display: "flex", gap: 20, justifyContent: "center", flexWrap: "wrap" }}>
             <a href="https://cal.eu/poza-ki/30min" target="_blank" style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "22px 56px", borderRadius: 60, textDecoration: "none", fontFamily: BF, fontSize: 16, fontWeight: 700, letterSpacing: 1, backgroundColor: C.gold, color: "#050507", boxShadow: `0 4px 30px ${C.goldG}` }}>Gespräch buchen →</a>
-            <a href={`tel:${PHONE.replace(/\s/g, "")}`} style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "22px 40px", borderRadius: 60, textDecoration: "none", fontFamily: BF, fontSize: 14, letterSpacing: 1, backgroundColor: "transparent", color: C.light, border: `1px solid ${C.line2}` }}>Demo anrufen</a>
+            <a href="#demo" style={{ display: "inline-flex", alignItems: "center", gap: 12, padding: "22px 40px", borderRadius: 60, textDecoration: "none", fontFamily: BF, fontSize: 14, letterSpacing: 1, backgroundColor: "transparent", color: C.light, border: `1px solid ${C.line2}` }}>Demo testen</a>
           </div>
         </Reveal>
         <Reveal delay={0.4}>
@@ -583,8 +579,8 @@ export default function PozaKI() {
           <p style={{ fontFamily: BF, fontSize: 13, color: C.dim, marginTop: 2 }}>kontakt@poza-ki.com</p>
         </div>
         <div style={{ display: "flex", gap: 32 }}>
-          {["Impressum", "Datenschutz", "AGB"].map(l => (
-            <a key={l} href="#" style={{ fontFamily: MF, fontSize: 11, letterSpacing: 2, color: C.dim, textDecoration: "none", textTransform: "uppercase" }}>{l}</a>
+          {[{l:"Impressum",p:"/impressum"},{l:"Datenschutz",p:"/datenschutz"},{l:"AGB",p:"/agb"}].map(i => (
+            <a key={i.l} href={i.p} style={{ fontFamily: MF, fontSize: 11, letterSpacing: 2, color: C.dim, textDecoration: "none", textTransform: "uppercase" }}>{i.l}</a>
           ))}
         </div>
         <p style={{ fontFamily: MF, fontSize: 11, color: C.dim, letterSpacing: 2 }}>© 2026 POZA-KI</p>
