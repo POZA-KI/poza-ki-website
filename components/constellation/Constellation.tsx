@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useMotionPref } from '../useMotionPref';
-import { hatWebGL } from '../webgl';
+import { MOBIL_ABFRAGE, useMedia, useWebGL } from '../faehig';
 import { anteil, proFrame } from '../scrollStore';
 import { useBereich } from '../useBereich';
 import { useNaehe } from '../useSichtbar';
@@ -127,10 +127,8 @@ export default function Constellation({ items, status }: { items: Produkt[]; sta
     return () => window.removeEventListener('keydown', onKey);
   }, [setzeFokus]);
 
-  const kannWebGL = typeof window !== 'undefined' && hatWebGL();
-  const mobil =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches;
+  const kannWebGL = useWebGL();
+  const mobil = useMedia(MOBIL_ABFRAGE);
 
   if (reduziert || !kannWebGL || mobil) {
     // ref auch im Fallback — siehe Blueprint: sonst misst useScroll gegen

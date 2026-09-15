@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import { useMotionPref } from '../useMotionPref';
-import { hatWebGL } from '../webgl';
+import { MOBIL_ABFRAGE, useMedia, useWebGL } from '../faehig';
 import { anteil, proFrame } from '../scrollStore';
 import { useBereich } from '../useBereich';
 import { useNaehe } from '../useSichtbar';
@@ -58,11 +58,8 @@ export default function Blueprint({ satz, unter }: { satz: string; unter: string
     });
   }, [mass, reduziert]);
 
-  const mobil =
-    typeof window !== 'undefined' &&
-    window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches;
-
-  const kannWebGL = typeof window !== 'undefined' && hatWebGL();
+  const mobil = useMedia(MOBIL_ABFRAGE);
+  const kannWebGL = useWebGL();
 
   // Ohne WebGL oder bei reduzierter Bewegung: der Claim als ruhiges Statement.
   if (reduziert || !kannWebGL) {

@@ -58,11 +58,18 @@ export const viewport: Viewport = {
 };
 
 /**
- * Setzt data-motion vor der Hydration, damit der Nutzer-Toggle aus dem Footer
- * nicht erst nach dem ersten Paint greift (sonst blitzt die Animation auf).
+ * Loest die Bewegungseinstellung VOR dem ersten Paint auf und schreibt sie als
+ * data-motion an das <html>. Reihenfolge: gespeicherte Wahl, sonst
+ * Systemvorgabe, sonst der Standard "full".
+ *
+ * Das Attribut ist die massgebliche Quelle — fuer das CSS wie fuer React.
+ * Vorher wurde es nur gesetzt, wenn eine gespeicherte Wahl existierte; ohne
+ * Attribut entschied allein die Media Query, und der Toggle konnte eine
+ * systemweit reduzierte Einstellung nicht ueberschreiben.
  */
-const MOTION_INIT = `(function(){try{var m=localStorage.getItem('pozaki.motion');
-if(m==='reduced'||m==='full'){document.documentElement.dataset.motion=m;}}catch(e){}})();`;
+const MOTION_INIT = `(function(){var m=null;try{m=localStorage.getItem('pozaki.motion');}catch(e){}
+if(m!=='reduced'&&m!=='full'){m=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches?'reduced':'full';}
+document.documentElement.dataset.motion=m;})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

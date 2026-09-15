@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { PANELS } from './panelMocks';
 import { useMotionPref } from '../useMotionPref';
-import { hatWebGL } from '../webgl';
+import { MOBIL_ABFRAGE, useMedia, useWebGL } from '../faehig';
 import { anteil, proFrame, scrolleZu } from '../scrollStore';
 import { useBereich } from '../useBereich';
 import { useNaehe } from '../useSichtbar';
@@ -46,15 +46,12 @@ export default function Gallery() {
   const ziel = useRef(0);
   const zug = useRef(0);
   const [index, setIndex] = useState(0);
-  const [mobil, setMobil] = useState(false);
+  const mobil = useMedia(MOBIL_ABFRAGE);
+  const kannWebGL = useWebGL();
   const reduziert = useMotionPref();
   const mass = useBereich(bereich, 0, 1);
   const naehe = useNaehe(bereich);
   useMeldeDeckung(buehne);
-
-  useEffect(() => {
-    setMobil(window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches);
-  }, []);
 
   // DESKTOP: der Scroll faehrt die Kamera. EIN Abnehmer am zentralen Loop,
   // kein eigener rAF; nur der Stationswechsel geht durch React.
@@ -143,7 +140,7 @@ export default function Gallery() {
     scrolleZu(b.start + b.weg * (z / (PANELS.length - 1)), 1.3);
   }, [mass, mobil]);
 
-  if (reduziert || (typeof window !== 'undefined' && !hatWebGL())) {
+  if (reduziert || !kannWebGL) {
     return (
       <div ref={bereich}>
         <GalleryFallback />

@@ -14,6 +14,8 @@ import Blueprint from '@/components/blueprint/Blueprint';
 import Constellation from '@/components/constellation/Constellation';
 import FinaleCore from '@/components/hud/FinaleCore';
 import Reveal from '@/components/Reveal';
+import AuditCta from '@/components/kontakt/AuditCta';
+import AuditModal from '@/components/kontakt/AuditModal';
 import Faq from '@/components/Faq';
 import MotionToggle from '@/components/MotionToggle';
 import MaskHeadline from '@/components/MaskHeadline';
@@ -27,7 +29,7 @@ import Gallery from '@/components/gallery/Gallery';
 import Founder from '@/components/Founder';
 import {
   hero, navigation, medien, these, leistungen, fallstudie,
-  vorgehen, offer, founder, faq, kontakt, produkte, claim, EMAIL, STANDORT_LANG,
+  vorgehen, offer, founder, faq, kontakt, produkte, claim, STANDORT_LANG,
 } from '@/content/site';
 
 const pad = (n: number) => String(n).padStart(2, '0');
@@ -50,7 +52,12 @@ export default function Home() {
           <Link href="/" className="brand mono">POZA-KI</Link>
           <nav aria-label="Hauptnavigation" className="site-nav">
             {navigation.map((n) => (
-              <a key={n.href} href={n.href} className="site-nav__link mono">{n.label}</a>
+              n.href === '#kontakt'
+                ? (
+                  /* Kontakt fuehrt in die Anfrage, nicht nur an das Seitenende. */
+                  <AuditCta key={n.href} className="site-nav__link mono">{n.label}</AuditCta>
+                )
+                : <a key={n.href} href={n.href} className="site-nav__link mono">{n.label}</a>
             ))}
           </nav>
         </div>
@@ -70,7 +77,7 @@ export default function Home() {
               <Reveal sofort delay={0.16}>
                 <div className="hero__ctas">
                   <Magnetic>
-                    <a className="btn btn--primary" href="#kontakt">{hero.ctaPrimaer}</a>
+                    <AuditCta>{hero.ctaPrimaer}</AuditCta>
                   </Magnetic>
                   <a className="tlink" href="#vorgehen">{hero.ctaSekundaer}</a>
                 </div>
@@ -255,7 +262,9 @@ export default function Home() {
                       </div>
                     ))}
                   </dl>
-                  <Magnetic><a className="btn btn--primary audit__cta" href="#kontakt">{hero.ctaPrimaer}</a></Magnetic>
+                  <Magnetic>
+                    <AuditCta className="btn btn--primary audit__cta">{hero.ctaPrimaer}</AuditCta>
+                  </Magnetic>
                 </div>
               </Reveal>
             </div>
@@ -295,9 +304,9 @@ export default function Home() {
                 <Reveal delay={0.06}><p className="body kontakt__text">{kontakt.text}</p></Reveal>
                 <Reveal delay={0.1}>
                   <Magnetic>
-                    <a className="btn btn--primary kontakt__cta" href={`mailto:${EMAIL}`}>
+                    <AuditCta className="btn btn--primary kontakt__cta">
                       {hero.ctaPrimaer}
-                    </a>
+                    </AuditCta>
                   </Magnetic>
                 </Reveal>
                 <Reveal delay={0.16}>
@@ -339,6 +348,9 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Ein Dialog fuer alle CTAs der Seite */}
+      <AuditModal />
     </>
   );
 }

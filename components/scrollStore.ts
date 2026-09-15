@@ -49,7 +49,12 @@ export type Fortschritt = {
   dt: number;
 };
 
-type LenisArtig = { scrollTo: (y: number, o?: { duration?: number }) => void };
+type LenisArtig = {
+  scrollTo: (y: number, o?: { duration?: number }) => void;
+  /** Anhalten/Fortsetzen — gebraucht fuer die Scroll-Sperre im Modal. */
+  stop?: () => void;
+  start?: () => void;
+};
 
 const zustand: Fortschritt = {
   roh: 0, weich: 0, tempo: 0, tempoPx: 0, mx: 0, my: 0, mausAktiv: false, y: 0, yWeich: 0, vh: 0, zeit: 0, dt: 0,

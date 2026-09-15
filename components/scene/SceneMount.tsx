@@ -4,7 +4,7 @@ import dynamic from 'next/dynamic';
 import { useEffect, useState } from 'react';
 import { useMotionPref } from '../useMotionPref';
 import StaticLattice from '../StaticLattice';
-import { hatWebGL } from '../webgl';
+import { useWebGL } from '../faehig';
 import { useGedeckt } from '../deckung';
 
 const Scene = dynamic(() => import('./Scene'), { ssr: false });
@@ -13,25 +13,17 @@ const Scene = dynamic(() => import('./Scene'), { ssr: false });
  * Die Szene wird erst nach dem ersten Idle geladen — sie darf das LCP nicht
  * blockieren. Bei reduzierter Bewegung kommt stattdessen das SVG-Standbild.
  *
- * AUF MOBILE GAR NICHT: Der Hintergrund ist ein dezentes Netz aus 70 Punkten,
- * das auf einem Telefon ohnehin kaum zur Geltung kommt — er zieht aber die
- * gesamte Three.js/R3F-Kette in den Seitenstart. Gemessen gegen die Live-
- * Domain: 1146 ms Scripting im groessten Chunk, Total Blocking Time 650 ms.
- * Ohne ihn laedt Three.js erst, wenn sich der Nutzer der Systems Gallery
- * naehert — die auf Mobile weiterhin in echtem WebGL laeuft. Das Standbild
- * ist die gestaltete Entsprechung, kein Notbehelf.
+ * Auf Mobile laeuft die Szene ebenfalls, nur mit kleinerem Budget (weniger
+ * Punkte, niedrigere DPR, kein Bloom — siehe ../geraet). Die Geraeteklasse
+ * senkt die Qualitaet, sie schaltet nie ganz auf statisch: Ein Telefon soll
+ * dieselbe Seite sehen, nur sparsamer gerechnet. Nur eine ausdrueckliche
+ * Entscheidung fuer reduzierte Bewegung fuehrt zum Standbild.
  */
 export default function SceneMount() {
   const reduziert = useMotionPref();
   const gedeckt = useGedeckt();
   const [bereit, setBereit] = useState(false);
-  const [webgl, setWebgl] = useState<boolean | null>(null);
-  const [mobil, setMobil] = useState<boolean | null>(null);
-
-  useEffect(() => {
-    setWebgl(hatWebGL());
-    setMobil(window.matchMedia('(max-width: 900px), (hover: none) and (pointer: coarse)').matches);
-  }, []);
+  const webgl = useWebGL();
 
   useEffect(() => {
     type RIC = (cb: () => void, o?: { timeout: number }) => number;
@@ -45,10 +37,9 @@ export default function SceneMount() {
   }, []);
 
   if (reduziert) return <StaticLattice />;
-  if (mobil !== false) return <StaticLattice />;
   // Ohne WebGL niemals den Canvas mounten — sonst nimmt der Fehlschlag
   // den restlichen Client-Render mit.
-  if (webgl === false) return <StaticLattice />;
-  if (!bereit || webgl === null) return <StaticLattice />;
+  if (!webgl) return <StaticLattice />;
+  if (!bereit) return <StaticLattice />;
   return <Scene aktiv={!gedeckt} />;
 }

@@ -1,0 +1,23 @@
+import { chromium, devices } from 'playwright';
+const b = await chromium.launch();
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 } });
+const p = await ctx.newPage();
+await p.goto(process.env.URL || 'http://localhost:3002', { waitUntil: 'networkidle' });
+await p.waitForTimeout(2500);
+await p.locator('.hero__ctas button').first().click();
+await p.waitForTimeout(900);
+await p.screenshot({ path: '/tmp/perf/modal-desktop.png' });
+// Fehlerzustand
+await p.locator('dialog.mdl button[type=submit]').click();
+await p.waitForTimeout(600);
+await p.screenshot({ path: '/tmp/perf/modal-fehler.png' });
+await ctx.close();
+const m = await b.newContext({ ...devices['iPhone 13'], viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+const q = await m.newPage();
+await q.goto(process.env.URL || 'http://localhost:3002', { waitUntil: 'networkidle' });
+await q.waitForTimeout(2500);
+await q.locator('.hero__ctas button').first().click();
+await q.waitForTimeout(900);
+await q.screenshot({ path: '/tmp/perf/modal-mobil.png' });
+console.log('Überlauf mobil:', await q.evaluate(() => document.documentElement.scrollWidth - window.innerWidth));
+await b.close();

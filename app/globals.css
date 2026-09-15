@@ -74,7 +74,17 @@ html{
   overflow-x:clip;              /* 200%-Zoom ohne Horizontalscroll */
   scroll-behavior:smooth;
 }
-@media (prefers-reduced-motion:reduce){ html{scroll-behavior:auto;} }
+/* ---------- Reduzierte Bewegung ----------
+   Massgeblich ist das Attribut data-motion am <html>, nicht die Media Query.
+   Das Inline-Skript im <head> loest die Einstellung vor dem ersten Paint auf
+   (gespeicherte Wahl > Systemvorgabe > Standard "full"). Nur so kann der
+   Toggle die Systemeinstellung wirklich in BEIDE Richtungen ueberschreiben —
+   mit reiner Media Query blieben die CSS-Animationen sonst aus, auch wenn
+   jemand sie ausdruecklich einschaltet.
+   Die Media Query bleibt als Fallback fuer den Fall ohne JavaScript, greift
+   dort aber nur, solange keine ausdrueckliche Wahl auf "full" steht. */
+html[data-motion="reduced"]{scroll-behavior:auto;}
+@media (prefers-reduced-motion:reduce){ html:not([data-motion="full"]){scroll-behavior:auto;} }
 
 body{
   margin:0;
@@ -215,13 +225,19 @@ main{position:relative;z-index:var(--z-main);}
 }
 
 /* ---------- Reduced Motion ---------- */
+[data-motion="reduced"] *,[data-motion="reduced"] *::before,[data-motion="reduced"] *::after{
+  animation-duration:.01ms !important;
+  animation-iteration-count:1 !important;
+  transition-duration:.01ms !important;
+}
+[data-motion="reduced"] .rails__line{transform:scaleY(1) !important;}
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{
+  html:not([data-motion="full"]) *,html:not([data-motion="full"]) *::before,html:not([data-motion="full"]) *::after{
     animation-duration:.01ms !important;
     animation-iteration-count:1 !important;
     transition-duration:.01ms !important;
   }
-  .rails__line{transform:scaleY(1) !important;}
+  html:not([data-motion="full"]) .rails__line{transform:scaleY(1) !important;}
 }
 :root[data-motion="reduced"] .rails__line{transform:scaleY(1) !important;}
 
@@ -297,7 +313,8 @@ main{position:relative;z-index:var(--z-main);}
 @keyframes scrollpuls{
   0%,100%{transform:scaleY(0);} 40%{transform:scaleY(1);} 70%{transform:scaleY(1);}
 }
-@media (prefers-reduced-motion:reduce){ .hero__scroll-line{animation:none;transform:scaleY(1);} }
+[data-motion="reduced"] .hero__scroll-line{animation:none;transform:scaleY(1);}
+@media (prefers-reduced-motion:reduce){ html:not([data-motion="full"]) .hero__scroll-line{animation:none;transform:scaleY(1);} }
 @media (max-height:760px) and (min-width:1024px){
   .hero .display{font-size:clamp(2.25rem,3.6vw,3.25rem);}
 }
@@ -704,12 +721,17 @@ html.hat-cursor .cursor-punkt,html.hat-cursor .cursor-ring{opacity:1;}
 }
 
 /* ---------- Reduced Motion ---------- */
+[data-motion="reduced"] .cursor-punkt, [data-motion="reduced"] .cursor-ring, [data-motion="reduced"] .grain{display:none;}
+[data-motion="reduced"] .tilt__inner{transform:none !important;}
+[data-motion="reduced"] .pin__sticky, [data-motion="reduced"] .scrolly__sticky{position:static;height:auto;}
+[data-motion="reduced"] .these__p--pin{position:static;opacity:1 !important;transform:none !important;}
+[data-motion="reduced"] .these__text--pin{min-height:0;}
 @media (prefers-reduced-motion:reduce){
-  .cursor-punkt,.cursor-ring,.grain{display:none;}
-  .tilt__inner{transform:none !important;}
-  .pin__sticky,.scrolly__sticky{position:static;height:auto;}
-  .these__p--pin{position:static;opacity:1 !important;transform:none !important;}
-  .these__text--pin{min-height:0;}
+  html:not([data-motion="full"]) .cursor-punkt, html:not([data-motion="full"]) .cursor-ring, html:not([data-motion="full"]) .grain{display:none;}
+  html:not([data-motion="full"]) .tilt__inner{transform:none !important;}
+  html:not([data-motion="full"]) .pin__sticky, html:not([data-motion="full"]) .scrolly__sticky{position:static;height:auto;}
+  html:not([data-motion="full"]) .these__p--pin{position:static;opacity:1 !important;transform:none !important;}
+  html:not([data-motion="full"]) .these__text--pin{min-height:0;}
 }
 
 /* ==========================================================================
@@ -1059,9 +1081,11 @@ body::before{
 .foot__punkt{width:5px;height:5px;border-radius:50%;background:var(--accent);
   box-shadow:0 0 8px rgba(77,166,255,.8);}
 
+[data-motion="reduced"] .prail__impuls{display:none;}
+[data-motion="reduced"] body::before{opacity:.5;}
 @media (prefers-reduced-motion:reduce){
-  .prail__impuls{display:none;}
-  body::before{opacity:.5;}
+  html:not([data-motion="full"]) .prail__impuls{display:none;}
+  html:not([data-motion="full"]) body::before{opacity:.5;}
 }
 
 
@@ -1197,10 +1221,13 @@ body::before{
 .pnav__nr span{display:block;transition:transform .38s var(--e-out);}
 .pnav__item.is-on .pnav__nr span{transform:translateY(-1.1em);}
 
+[data-motion="reduced"] .these__p--pin{filter:none !important;clip-path:none !important;transform:none !important;}
+[data-motion="reduced"] .kontakt__cta::after, [data-motion="reduced"] .these__impuls, [data-motion="reduced"] .prail__sweep{display:none;}
+[data-motion="reduced"] .pnav__item.is-on .pnav__nr span{transform:none;}
 @media (prefers-reduced-motion:reduce){
-  .these__p--pin{filter:none !important;clip-path:none !important;transform:none !important;}
-  .kontakt__cta::after,.these__impuls,.prail__sweep{display:none;}
-  .pnav__item.is-on .pnav__nr span{transform:none;}
+  html:not([data-motion="full"]) .these__p--pin{filter:none !important;clip-path:none !important;transform:none !important;}
+  html:not([data-motion="full"]) .kontakt__cta::after, html:not([data-motion="full"]) .these__impuls, html:not([data-motion="full"]) .prail__sweep{display:none;}
+  html:not([data-motion="full"]) .pnav__item.is-on .pnav__nr span{transform:none;}
 }
 
 /* Pipeline: mitwandernder Lichtimpuls */
@@ -1317,9 +1344,11 @@ body::before{
   .konst__panels{grid-template-columns:1fr;margin-top:var(--s-4);}
   .konst__panel{animation:none;}
 }
+[data-motion="reduced"] .konst__kern, [data-motion="reduced"] .konst__ring, [data-motion="reduced"] .konst__panel{animation:none !important;}
+[data-motion="reduced"] .konst__impuls, [data-motion="reduced"] .konst__scan{display:none;}
 @media (prefers-reduced-motion:reduce){
-  .konst__kern,.konst__ring,.konst__panel{animation:none !important;}
-  .konst__impuls,.konst__scan{display:none;}
+  html:not([data-motion="full"]) .konst__kern, html:not([data-motion="full"]) .konst__ring, html:not([data-motion="full"]) .konst__panel{animation:none !important;}
+  html:not([data-motion="full"]) .konst__impuls, html:not([data-motion="full"]) .konst__scan{display:none;}
 }
 
 /* ==========================================================================
@@ -1478,8 +1507,9 @@ body::before{
   animation:lnRein 1.05s cubic-bezier(.16,1,.3,1) both;
   will-change:transform,opacity;
 }
+[data-motion="reduced"] .ln__rein{animation:none;opacity:1;transform:none;}
 @media (prefers-reduced-motion:reduce){
-  .ln__rein{animation:none;opacity:1;transform:none;}
+  html:not([data-motion="full"]) .ln__rein{animation:none;opacity:1;transform:none;}
 }
 
 /* ---------- Reveal im Hero, ohne JavaScript ----------
@@ -1489,6 +1519,146 @@ body::before{
   to{opacity:1;transform:translateY(0);}
 }
 .rvl{animation:rvlRein .56s cubic-bezier(.16,1,.3,1) both;}
+[data-motion="reduced"] .rvl{animation:none;opacity:1;transform:none;}
 @media (prefers-reduced-motion:reduce){
-  .rvl{animation:none;opacity:1;transform:none;}
+  html:not([data-motion="full"]) .rvl{animation:none;opacity:1;transform:none;}
 }
+
+/* ==========================================================================
+   ANFRAGE-MODAL
+   Gleiche Sprache wie die Gallery: dunkles Glas, feine Grid-Textur,
+   1px-Rahmen, Monospace-Microlabels. Als natives <dialog> — Fokusfalle, Esc
+   und Top-Layer kommen damit vom Browser.
+   ========================================================================== */
+.mdl{
+  /* Das Dialog-Element selbst ist die Buehne: es fuellt den Viewport, damit
+     ein Klick daneben schliessen kann. Das Panel darin traegt die Optik. */
+  width:100%;max-width:none;height:100%;max-height:none;
+  margin:0;padding:0;border:0;background:transparent;color:var(--text-primary);
+  overflow:auto;overscroll-behavior:contain;
+  display:grid;place-items:center;
+}
+.mdl::backdrop{
+  background:rgba(4,5,7,.82);
+  backdrop-filter:blur(6px);
+  opacity:0;
+}
+.mdl[open]::backdrop{ animation:mdlGrund .32s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes mdlGrund{ to{opacity:1;} }
+
+.mdl__panel{
+  position:relative;
+  width:min(680px,calc(100vw - 2 * var(--s-6)));
+  margin-block:max(var(--s-8), env(safe-area-inset-top)) max(var(--s-8), env(safe-area-inset-bottom));
+  padding:clamp(1.5rem,3vw,2.25rem);
+  background:rgba(10,12,15,.97);
+  border:1px solid var(--line-rule);
+  box-shadow:0 40px 120px rgba(0,0,0,.6);
+  animation:mdlRein .38s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes mdlRein{
+  from{opacity:0;transform:translateY(18px) scale(.985);}
+  to{opacity:1;transform:none;}
+}
+[data-motion="reduced"] .mdl__panel{animation:none;}
+[data-motion="reduced"] .mdl[open]::backdrop{animation:none;opacity:1;}
+@media (prefers-reduced-motion:reduce){
+  html:not([data-motion="full"]) .mdl__panel{animation:none;}
+  html:not([data-motion="full"]) .mdl[open]::backdrop{animation:none;opacity:1;}
+}
+
+/* Grid-Textur wie im HUD der Gallery */
+.mdl__raster{
+  position:absolute;inset:0;pointer-events:none;
+  background-image:
+    linear-gradient(to right, rgba(244,246,248,.022) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(244,246,248,.022) 1px, transparent 1px);
+  background-size:48px 48px;
+  -webkit-mask-image:radial-gradient(ellipse 100% 80% at 50% 0%, #000 10%, transparent 80%);
+  mask-image:radial-gradient(ellipse 100% 80% at 50% 0%, #000 10%, transparent 80%);
+}
+
+.mdl__kopf{
+  position:relative;display:flex;justify-content:space-between;align-items:center;
+  padding-bottom:var(--s-4);margin-bottom:var(--s-5);
+  border-bottom:1px solid var(--line-rule);
+}
+.mdl__micro{display:flex;align-items:center;gap:var(--s-3);color:var(--text-muted);}
+.mdl__punkt{
+  width:5px;height:5px;border-radius:50%;background:var(--accent);
+  box-shadow:0 0 8px rgba(77,166,255,.85);flex:none;
+}
+.mdl__zu{
+  font-size:var(--fs-meta);letter-spacing:.14em;color:var(--text-muted);
+  min-height:44px;padding-inline:var(--s-2);
+  transition:color var(--d-1);
+}
+@media (hover:hover) and (pointer:fine){ .mdl__zu:hover{color:var(--text-primary);} }
+
+.mdl__titel{position:relative;max-width:22ch;}
+.mdl__text{position:relative;margin-top:var(--s-3);color:var(--text-secondary);max-width:56ch;font-size:.95rem;}
+
+.mdl__form{position:relative;margin-top:var(--s-6);}
+.mdl__reihe{display:grid;grid-template-columns:1fr 1fr;gap:var(--s-4);}
+@media (max-width:639px){ .mdl__reihe{grid-template-columns:1fr;gap:0;} }
+.mdl__feld{margin-bottom:var(--s-4);}
+.mdl__label{
+  display:block;margin-bottom:var(--s-2);
+  font-size:var(--fs-meta);letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text-muted);
+}
+.mdl__mikro{color:var(--text-faint);letter-spacing:.14em;}
+.mdl__eingabe{
+  width:100%;min-height:48px;padding:12px 14px;
+  background:rgba(8,9,10,.7);
+  border:1px solid var(--line-rule);border-radius:0;
+  color:var(--text-primary);font:inherit;font-size:1rem;
+  transition:border-color var(--d-1), background var(--d-1);
+}
+.mdl__eingabe::placeholder{color:var(--text-faint);}
+.mdl__eingabe:focus-visible{
+  outline:none;border-color:var(--accent);background:rgba(8,9,10,.95);
+}
+.mdl__eingabe.is-fehler{border-color:#FF6B6B;}
+.mdl__textarea{min-height:104px;resize:vertical;line-height:1.55;}
+.mdl__select{
+  appearance:none;
+  background-image:linear-gradient(45deg,transparent 50%,var(--text-muted) 50%),
+                   linear-gradient(135deg,var(--text-muted) 50%,transparent 50%);
+  background-position:calc(100% - 20px) calc(50% + 2px), calc(100% - 14px) calc(50% + 2px);
+  background-size:6px 6px, 6px 6px;
+  background-repeat:no-repeat;
+  padding-right:40px;
+}
+.mdl__fehler{margin-top:6px;font-size:var(--fs-meta);color:#FF8B8B;letter-spacing:.04em;}
+.mdl__panne{
+  margin-bottom:var(--s-5);padding:12px 14px;
+  border:1px solid rgba(255,107,107,.4);background:rgba(255,107,107,.07);
+  font-size:var(--fs-meta);color:#FFB4B4;line-height:1.6;
+}
+.mdl__panne a{color:var(--accent);text-decoration:underline;}
+.mdl__senden{width:100%;margin-top:var(--s-2);display:inline-flex;align-items:center;justify-content:center;gap:10px;}
+.mdl__senden[disabled]{opacity:.7;cursor:progress;}
+.mdl__spinner{
+  width:13px;height:13px;border-radius:50%;flex:none;
+  border:1.5px solid rgba(8,9,10,.3);border-top-color:#08090A;
+  animation:mdlDreh .7s linear infinite;
+}
+@keyframes mdlDreh{ to{transform:rotate(360deg);} }
+.mdl__hinweis{
+  margin-top:var(--s-4);text-align:center;
+  font-size:var(--fs-meta);letter-spacing:.1em;color:var(--text-muted);
+}
+
+/* Honeypot: fuer Menschen unerreichbar, fuer Bots im DOM sichtbar.
+   Kein display:none — manche Bots ignorieren ausgeblendete Felder. */
+.mdl__falle{
+  position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;
+}
+
+.mdl__ergebnis{position:relative;padding-block:var(--s-6) var(--s-4);}
+.mdl__status{
+  font-size:var(--fs-meta);letter-spacing:.24em;color:var(--accent);
+  margin-bottom:var(--s-5);
+}
+.mdl__status::before{content:'> ';color:var(--text-faint);}
