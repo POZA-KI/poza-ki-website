@@ -820,28 +820,6 @@ html.hat-cursor .cursor-punkt,html.hat-cursor .cursor-ring{opacity:1;}
 }
 .galf__btn.is-on{color:var(--accent);border-color:var(--line-acc, rgba(77,166,255,.5));}
 
-/* Mobile Variante: eigene Interaktion, keine geschrumpfte Desktop-Fassung.
-   Der Daumen wischt seitwaerts durch die Stationen, statt 600vh Pinnstrecke
-   durchzuscrollen. touch-action:pan-y laesst das vertikale Seitenscrollen
-   unangetastet — nur die Querbewegung uebernimmt die Galerie. */
-@media (max-width:899px){
-  .gal{height:auto !important;}
-  .gal__sticky{
-    position:relative;
-    height:calc(88svh - env(safe-area-inset-bottom));
-  }
-  /* Buehne endet ueber dem HUD: sonst steht das Panel in der oberen Haelfte
-     und darunter klafft eine tote Flaeche. Mit dem kuerzeren Ausschnitt wird
-     das Seitenverhaeltnis weniger extrem, die Kamera rueckt naeher heran und
-     das Panel fuellt den Ausschnitt. */
-  .gal__buehne{inset:0 0 33% 0;touch-action:pan-y;}
-  .gal__hud{padding:var(--s-5);}
-  .gal__unten{padding-bottom:calc(74px + env(safe-area-inset-bottom));}
-  .galbar{
-    bottom:calc(0.9rem + env(safe-area-inset-bottom));
-    width:min(420px,88vw);
-  }
-}
 .gal__wisch{
   margin-bottom:var(--s-3);color:var(--text-muted);
   font-size:var(--fs-meta);letter-spacing:.2em;
@@ -1487,13 +1465,21 @@ body::before{
 @media (max-width:1100px){ .kon__status{position:static;margin-top:var(--s-6);} }
 
 /* Flache Variante */
-.konf{padding-block:var(--s-10);}
+/* Die flache Constellation steht ausserhalb von .wrap (die 3D-Fassung braucht
+   die volle Breite). Damit fehlt ihr der Seitenrand — Wortmarke, Text und
+   Statuszeile lagen auf 0 px und liefen rechts aus dem Bild. */
+.konf{
+  padding-block:var(--s-10);
+  padding-inline:var(--gutter);
+  max-inline-size:var(--container);
+  margin-inline:auto;
+}
 .konf__cv{width:100%;max-width:52rem;height:auto;display:block;margin-inline:auto;
   border:1px solid var(--line-rule);background:#0B0F14;}
 .konf__marke{margin-top:var(--s-6);font-weight:600;font-size:var(--fs-h3);color:var(--text-primary);}
 .konf__marke.is-versal{letter-spacing:.2em;}
 .konf__text{margin-top:var(--s-2);color:var(--text-secondary);font-size:var(--fs-small);}
-.konf__leiste{display:flex;gap:var(--s-2);margin-top:var(--s-6);}
+.konf__leiste{display:flex;flex-wrap:wrap;gap:var(--s-2);margin-top:var(--s-6);}
 
 
 /* ---------- Headline-Reveal ohne JavaScript ----------
@@ -1662,3 +1648,136 @@ body::before{
   margin-bottom:var(--s-5);
 }
 .mdl__status::before{content:'> ';color:var(--text-faint);}
+
+/* ==========================================================================
+   MOBILE DICHTE (≤768 px)
+   Eigene Rhythmik statt geschrumpfter Desktop-Abstände. Der Desktop lebt von
+   Raum; auf 390 px Breite wird aus demselben Raum tote Fläche. Gemessen auf
+   der Live-Seite: 14 Stellen mit mehr als 25 vh zusammenhängender Leere,
+   schlimmste 32 vh in der These-Sektion.
+   ========================================================================== */
+@media (max-width:768px){
+  :root{
+    /* Sektionsabstand: 40 px oben + 40 px unten = 80 px zwischen zwei
+       Sektionen, statt 2 × 96 px. */
+    --section-y:clamp(2.25rem,7vw,3rem);
+    --section-y-lg:clamp(2.75rem,9vw,4rem);
+    /* Die großen Stufen der Abstandsskala zusammenziehen. Die kleinen
+       (s-1…s-6) bleiben: sie tragen Binnenabstände, nicht Leere. */
+    --s-8:1.25rem;
+    --s-10:1.5rem;
+    --s-12:1.75rem;
+    --s-16:2.25rem;
+    --s-20:2.75rem;
+    /* Microlabels eine Spur groesser: 11 px versalgesetzt mit weitem Tracking
+       liest sich auf Armlaenge am Telefon muehsam. */
+    --fs-label:0.75rem;
+  }
+
+  /* Sektionsköpfe dichter an ihren Inhalt */
+  .shud{padding-top:var(--s-6);margin-bottom:var(--s-6);}
+  .shud__titel{margin-top:var(--s-3);max-width:none;}
+  .shud__label{margin-top:var(--s-3);}
+
+  .rule{margin-bottom:var(--s-6);}
+
+  /* Grundraster kraeftiger: Auf dem Telefon ist es neben dem Netz das
+     einzige, was die leeren Flaechen strukturiert. Bei .018 war es auf
+     einem OLED-Display schlicht nicht vorhanden. */
+  body::before{
+    background-image:
+      linear-gradient(to right, rgba(244,246,248,.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(244,246,248,.05) 1px, transparent 1px);
+    background-size:64px 64px;
+    -webkit-mask-image:radial-gradient(ellipse 140% 80% at 50% 35%, #000 20%, transparent 90%);
+    mask-image:radial-gradient(ellipse 140% 80% at 50% 35%, #000 20%, transparent 90%);
+  }
+
+  /* Hero: Inhalt nach oben statt mittig. Zentriert in 100svh entsteht ueber
+     der Headline ein Loch von rund 28 vh — der einzige Grund dafuer waere
+     Symmetrie, und die sieht auf dem Telefon niemand. */
+  .hero{min-height:auto;align-items:flex-start;padding-block:var(--s-12) var(--section-y);}
+  .hero__inner{padding-top:var(--s-8);}
+}
+
+/* ---------- These mobil: ein kompakter Block ----------
+   Headline, darunter die vier Absätze als nummerierte Liste, jeder mit
+   eigener Hairline. Kein Pin, keine Sticky-Bühne, Höhe folgt dem Inhalt. */
+.these__inner--kompakt .these__statement{max-width:none;}
+.these__liste{list-style:none;margin-top:var(--s-6);}
+.these__punkt{
+  display:grid;grid-template-columns:2.5rem 1fr;gap:var(--s-2);
+  padding-block:var(--s-4);
+  border-top:1px solid var(--line-rule);
+}
+.these__punkt:last-child{border-bottom:1px solid var(--line-rule);}
+.these__nr{
+  font-size:var(--fs-meta);letter-spacing:.14em;color:var(--accent);
+  padding-top:.25em;
+}
+.these__liste .these__p{margin-top:0;}
+
+/* Gestaffeltes Einblenden beim Erreichen der Sektion. Als CSS-Animation mit
+   view-timeline, wo verfuegbar; sonst laeuft sie einmalig beim Laden ab —
+   in beiden Faellen ohne JavaScript und ohne Scrollweg zu verbrauchen. */
+.these__punkt--rein{
+  animation:theseRein .6s cubic-bezier(.16,1,.3,1) both;
+}
+@keyframes theseRein{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:none;}
+}
+@supports (animation-timeline: view()){
+  .these__punkt--rein{
+    animation-timeline:view();
+    animation-range:entry 0% entry 55%;
+    animation-delay:0s !important;
+  }
+}
+[data-motion="reduced"] .these__punkt--rein{animation:none;opacity:1;transform:none;}
+@media (prefers-reduced-motion:reduce){
+  html:not([data-motion="full"]) .these__punkt--rein{animation:none;opacity:1;transform:none;}
+}
+@media (max-width:768px){
+  .these{padding-bottom:var(--section-y) !important;}
+  .these__text{margin-top:var(--s-6);}
+}
+
+/* ==========================================================================
+   MOBILE GALLERY — ans Ende gestellt, weil die Basisregeln fuer .galbar
+   weiter oben stehen und bei gleicher Spezifitaet sonst gewinnen.
+   ========================================================================== */
+/* Mobile Variante: eigene Interaktion, keine geschrumpfte Desktop-Fassung.
+   Der Daumen wischt seitwaerts durch die Stationen, statt 600vh Pinnstrecke
+   durchzuscrollen. touch-action:pan-y laesst das vertikale Seitenscrollen
+   unangetastet — nur die Querbewegung uebernimmt die Galerie.
+
+   Und: kompakte Reihe statt Buehne. Bei 743 px Hoehe stand das Panel oben im
+   Bild und darunter klaffte schwarze Flaeche (gemessen 28 vh). Die Buehne ist
+   jetzt nur so hoch wie das Panel, das HUD steht im Fluss direkt darunter —
+   Panel, Titel, Tags und Stationsleiste als ein Block. */
+@media (max-width:899px){
+  .gal{height:auto !important;}
+  .gal__sticky{
+    position:relative;height:auto;background:transparent;
+    padding-inline:var(--gutter);
+  }
+  .gal__buehne{
+    position:relative;inset:auto;
+    height:clamp(200px,31svh,260px);
+    touch-action:pan-y;
+    border:1px solid var(--line-hair);
+    background:#07090C;
+  }
+  .gal__hud{position:static;inset:auto;padding:var(--s-5) 0 0;}
+  .gal__unten{padding-bottom:0;max-width:none;}
+  /* relative, nicht static: Schiene und Glut sind absolut positionierte
+     Kinder und brauchen die Leiste als Bezug. Mit static hingen sie am
+     naechsten positionierten Vorfahren und lagen quer ueber dem Titel. */
+  .galbar{
+    position:relative;transform:none;left:auto;bottom:auto;
+    width:100%;margin-top:var(--s-6);
+  }
+  .galbar ul{padding-top:var(--s-3);}
+}
+

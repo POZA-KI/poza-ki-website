@@ -37,7 +37,10 @@ export function budget(mobil: boolean) {
     stufe: s,
     dpr: niedrig ? 1 : mittel ? 1.25 : 1.5,
     partikel: niedrig ? 600 : mittel ? 1200 : 2000,
-    netzPunkte: niedrig ? 70 : mittel ? 110 : 150,
+    /* Mobile bekommt nicht weniger Knoten, sondern gleich viele wie die
+       mittlere Stufe: das Netz ist dort das einzige Hintergrundmotiv und muss
+       tragen. Die Kosten liegen ohnehin bei den Kanten, nicht den Punkten. */
+    netzPunkte: niedrig ? 100 : mittel ? 110 : 150,
     bloom: !niedrig,
     bloomSkala: mittel ? 0.4 : 0.5,
     antialias: s === 'hoch' && !mobil,

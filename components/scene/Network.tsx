@@ -208,10 +208,14 @@ export default function Network({ mobil }: { mobil: boolean }) {
       <points ref={punkteRef} geometry={punkteGeo} frustumCulled={false}>
         <pointsMaterial
           color={FARBE_PUNKT}
-          size={mobil ? 1.6 : 1.4}
+          /* Auf Mobile deutlich praesenter. Mit 70 duennen Punkten und
+             Kanten bei 7 % Deckkraft war der Hintergrund auf dem Telefon
+             faktisch schwarz — das liest sich nicht als Zurueckhaltung,
+             sondern als Fehler. */
+          size={mobil ? 2.4 : 1.4}
           sizeAttenuation={false}
           transparent
-          opacity={0.5}
+          opacity={mobil ? 0.8 : 0.5}
           depthWrite={false}
           toneMapped={false}
         />
@@ -221,7 +225,7 @@ export default function Network({ mobil }: { mobil: boolean }) {
         <lineBasicMaterial
           color={FARBE_KANTE}
           transparent
-          opacity={0.07}
+          opacity={mobil ? 0.26 : 0.07}
           depthWrite={false}
           toneMapped={false}
         />

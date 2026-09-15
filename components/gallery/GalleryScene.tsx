@@ -5,7 +5,7 @@ import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import Room from './Room';
-import Panels, { BREITE, RADIUS } from './Panels';
+import Panels, { BREITE, HOEHE, RADIUS } from './Panels';
 import { budget } from '../geraet';
 import { brauchtResize, grobeEingabe } from '../canvasGroesse';
 
@@ -21,8 +21,15 @@ function Kamera({ lauf }: { lauf: React.RefObject<number> }) {
     // berechnet, nicht als Konstante gesetzt.
     const seiten = size.width / Math.max(1, size.height);
     const halb = Math.tan((cam.fov * Math.PI) / 360);
-    const noetig = (BREITE * 1.24) / (2 * halb * seiten);
-    const abstand = Math.max(76, noetig);
+    // Abstand, bei dem das Panel in BEIDE Richtungen passt
+    // Luft um das Panel: am Desktop grosszuegig, auf der kompakten
+    // Mobile-Buehne knapp — dort ist jeder freie Pixel tote Flaeche.
+    const kompakt = size.height < 420;
+    const randB = kompakt ? 1.06 : 1.24;
+    const randH = kompakt ? 1.15 : 1.35;
+    const fuerBreite = (BREITE * randB) / (2 * halb * seiten);
+    const fuerHoehe = (HOEHE * randH) / (2 * halb);
+    const abstand = Math.max(fuerBreite, fuerHoehe) * (kompakt ? 1.12 : 1.72);
     const zBasis = abstand - RADIUS;
     const eng = Math.min(1, 76 / abstand); // im Hochformat weniger Ausschlag
 
@@ -31,7 +38,11 @@ function Kamera({ lauf }: { lauf: React.RefObject<number> }) {
     const frac = l - Math.floor(l);
     const zwischen = Math.sin(frac * Math.PI);
     const zZiel = zBasis + zwischen * 26 * eng;
-    const yZiel = 2 + zwischen * 7 * eng;
+    // Auf der kompakten Buehne genau auf Panelhoehe bleiben: Der leichte
+    // Blick von oben ist Desktop-Komposition und schiebt das Panel dort in
+    // die obere Haelfte, waehrend unten die kaum sichtbare Spiegelung Platz
+    // frisst.
+    const yZiel = kompakt ? 0 : 2 + zwischen * 7 * eng;
     const rot = frac * 0.12;
     const k = Math.min(1, delta * 2.6);
     camera.position.z += (zZiel - camera.position.z) * k;
