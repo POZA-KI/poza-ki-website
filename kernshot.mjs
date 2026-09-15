@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: false, args: ['--use-gl=angle'] });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+const page = await ctx.newPage();
+const fehler = [];
+page.on('pageerror', (e) => fehler.push(String(e)));
+await page.goto('http://localhost:3002', { waitUntil: 'networkidle' });
+await page.waitForTimeout(3000);
+await page.mouse.move(700, 450);
+await page.evaluate(() => { const el = document.querySelector('.kon'); window.scrollTo(0, el.offsetTop + el.offsetHeight * 0.55); });
+await page.waitForTimeout(3500);
+await page.screenshot({ path: '/tmp/perf/kern-1.png' });
+await page.waitForTimeout(700);
+await page.screenshot({ path: '/tmp/perf/kern-2.png' });
+const box = await page.locator('.kon__buehne').boundingBox();
+await page.screenshot({ path: '/tmp/perf/kern-nah.png', clip: { x: Math.round(box.x + box.width/2 - 230), y: Math.round(box.y + box.height/2 - 170), width: 460, height: 340 } });
+console.log('fehler', fehler.slice(0,3));
+await b.close();

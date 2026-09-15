@@ -1,0 +1,18 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch({ headless: false, args: ['--use-gl=angle'] });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+const page = await ctx.newPage();
+const fehler = [];
+page.on('pageerror', (e) => fehler.push(String(e)));
+page.on('console', (m) => { if (m.type() === 'error') fehler.push(m.text()); });
+await page.goto('http://localhost:3002', { waitUntil: 'networkidle' });
+await page.waitForTimeout(3000);
+await page.mouse.move(60, 60);
+await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+await page.waitForTimeout(4000);
+await page.screenshot({ path: '/tmp/perf/finale.png' });
+const box = await page.locator('.kern').boundingBox();
+if (box) await page.screenshot({ path: '/tmp/perf/finale-kern.png', clip: { x: Math.round(box.x + box.width/2 - 260), y: Math.round(Math.max(0, box.y + box.height/2 - 190)), width: 520, height: 380 } });
+else console.log('kein .kern sichtbar');
+console.log('fehler', fehler.slice(0,3));
+await b.close();

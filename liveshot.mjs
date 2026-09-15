@@ -1,0 +1,18 @@
+import { chromium, devices } from 'playwright';
+const b = await chromium.launch({ headless: false, args: ['--use-gl=angle'] });
+const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+const p = await ctx.newPage();
+await p.goto('https://www.poza-ki.com', { waitUntil: 'networkidle' });
+await p.waitForTimeout(5000);
+await p.screenshot({ path: '/tmp/perf/live-hero.png' });
+await p.evaluate(() => { const el = document.querySelector('.kon'); window.scrollTo(0, el.offsetTop + el.offsetHeight * 0.55); });
+await p.waitForTimeout(4000);
+await p.screenshot({ path: '/tmp/perf/live-constellation.png' });
+await ctx.close();
+const m = await b.newContext({ ...devices['iPhone 13'], viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+const q = await m.newPage();
+await q.goto('https://www.poza-ki.com', { waitUntil: 'networkidle' });
+await q.waitForTimeout(4000);
+await q.screenshot({ path: '/tmp/perf/live-mobil.png' });
+await b.close();
+console.log('ok');

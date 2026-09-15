@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Der Energy Core der Seite, auf 32 px reduziert: heisser Punkt, ein Ring.
+       Bewusst kein Buchstabe — bei 16 px ist ein P von jedem anderen P nicht zu
+       unterscheiden, ein leuchtender Kern dagegen schon. Nur EIN Ring: mit
+       zweitem, gekipptem Ring las sich die Marke bei kleiner Groesse als Auge. -->
+  <defs>
+    <radialGradient id="glut" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1"/>
+      <stop offset="18%" stop-color="#E8F4FF" stop-opacity=".9"/>
+      <stop offset="48%" stop-color="#4DA6FF" stop-opacity=".42"/>
+      <stop offset="100%" stop-color="#4DA6FF" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="32" height="32" rx="7" fill="#08090A"/>
+  <circle cx="16" cy="16" r="11.5" fill="url(#glut)"/>
+  <circle cx="16" cy="16" r="10.6" fill="none" stroke="#4DA6FF" stroke-opacity=".5" stroke-width="1.3"/>
+  <circle cx="16" cy="16" r="3.1" fill="#ffffff"/>
+</svg>

@@ -1,0 +1,11 @@
+import { chromium } from 'playwright';
+const b = await chromium.launch();
+const page = await b.newPage({ viewport: { width: 1440, height: 900 } });
+const fremd = new Set();
+page.on('request', (r) => { const u = new URL(r.url()); if (!u.hostname.includes('localhost')) fremd.add(u.hostname); });
+await page.goto('http://localhost:3002', { waitUntil: 'networkidle' });
+await page.waitForTimeout(3000);
+await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+await page.waitForTimeout(3000);
+console.log([...fremd].join('\n') || '(keine externen Requests)');
+await b.close();
